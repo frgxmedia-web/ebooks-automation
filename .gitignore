@@ -1,0 +1,11 @@
+# Never commit these
+.env
+__pycache__/
+*.pyc
+*.pyo
+
+# Generated post images (large, regenerated each run)
+instagram_automation/posts/*.jpg
+
+# Post logs (optional — comment out if you want logs in git)
+instagram_automation/posts/post_log.jsonl

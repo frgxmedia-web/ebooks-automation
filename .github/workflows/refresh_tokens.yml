@@ -1,0 +1,100 @@
+name: Refresh Instagram Tokens (every 50 days)
+
+# Instagram long-lived tokens expire every 60 days.
+# This runs every 50 days and refreshes all of them automatically.
+# Refreshed tokens are saved back to GitHub Secrets via the GitHub API.
+
+on:
+  schedule:
+    # Every 50 days at 3:00 AM UTC (day 1, 51, 101, 151, 201...)
+    # Cron doesn't support "every N days" directly, so we use a monthly
+    # trigger and check day-of-month in the script
+    - cron: "0 3 1,15 * *"   # runs on 1st and 15th of every month
+  workflow_dispatch:         # manual trigger
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Refresh all long-lived tokens
+        env:
+          GH_TOKEN:       ${{ secrets.GH_PAT }}   # Personal Access Token with secrets:write
+          REPO:           ${{ github.repository }}
+          # All current tokens
+          IG_TOKEN_SOMATIC:        ${{ secrets.IG_TOKEN_SOMATIC }}
+          IG_TOKEN_GLP1:           ${{ secrets.IG_TOKEN_GLP1 }}
+          IG_TOKEN_ADHD:           ${{ secrets.IG_TOKEN_ADHD }}
+          IG_TOKEN_MONEY:          ${{ secrets.IG_TOKEN_MONEY }}
+          IG_TOKEN_HORMONE:        ${{ secrets.IG_TOKEN_HORMONE }}
+          IG_TOKEN_AI:             ${{ secrets.IG_TOKEN_AI }}
+          IG_TOKEN_INNER:          ${{ secrets.IG_TOKEN_INNER }}
+          IG_TOKEN_CAREER:         ${{ secrets.IG_TOKEN_CAREER }}
+          IG_TOKEN_RELATIONSHIP:   ${{ secrets.IG_TOKEN_RELATIONSHIP }}
+          IG_TOKEN_CALM:           ${{ secrets.IG_TOKEN_CALM }}
+
+        run: |
+          pip install --quiet requests PyNaCl
+
+          python3 << 'PYEOF'
+          import os, requests, base64, json
+          from nacl import encoding, public
+
+          TOKEN_VARS = [
+            "IG_TOKEN_SOMATIC", "IG_TOKEN_GLP1", "IG_TOKEN_ADHD",
+            "IG_TOKEN_MONEY", "IG_TOKEN_HORMONE", "IG_TOKEN_AI",
+            "IG_TOKEN_INNER", "IG_TOKEN_CAREER", "IG_TOKEN_RELATIONSHIP",
+            "IG_TOKEN_CALM",
+          ]
+
+          gh_token = os.environ["GH_TOKEN"]
+          repo     = os.environ["REPO"]
+
+          # Get repo public key for secret encryption
+          headers = {"Authorization": f"token {gh_token}",
+                     "Accept": "application/vnd.github+json"}
+          pk_resp = requests.get(
+              f"https://api.github.com/repos/{repo}/actions/secrets/public-key",
+              headers=headers)
+          pk_data = pk_resp.json()
+          pub_key = public.PublicKey(pk_data["key"].encode(), encoding.Base64Encoder())
+
+          def encrypt_secret(value: str) -> str:
+              box = public.SealedBox(pub_key)
+              enc = box.encrypt(value.encode())
+              return base64.b64encode(enc).decode()
+
+          def update_secret(name: str, value: str):
+              enc = encrypt_secret(value)
+              r = requests.put(
+                  f"https://api.github.com/repos/{repo}/actions/secrets/{name}",
+                  headers=headers,
+                  json={"encrypted_value": enc, "key_id": pk_data["key_id"]})
+              return r.status_code in (201, 204)
+
+          refreshed = 0
+          for var in TOKEN_VARS:
+              old_token = os.environ.get(var, "")
+              if not old_token:
+                  print(f"  skip {var} — not set")
+                  continue
+
+              # Call Instagram token refresh endpoint
+              r = requests.get(
+                  "https://graph.instagram.com/refresh_access_token",
+                  params={"grant_type": "ig_refresh_token", "access_token": old_token})
+
+              if r.status_code == 200:
+                  new_token = r.json().get("access_token", "")
+                  if new_token and new_token != old_token:
+                      ok = update_secret(var, new_token)
+                      print(f"  {'✓' if ok else '✗'} {var} refreshed")
+                      refreshed += 1
+                  else:
+                      print(f"  ~ {var} token unchanged")
+              else:
+                  print(f"  ✗ {var} refresh failed: {r.text[:100]}")
+
+          print(f"\nDone. {refreshed} tokens refreshed.")
+          PYEOF

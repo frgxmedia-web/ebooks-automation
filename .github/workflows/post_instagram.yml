@@ -1,0 +1,95 @@
+name: Instagram Auto-Post
+
+on:
+  schedule:
+    # Carousel 1 — 9:00 AM UTC
+    - cron: "0 9 * * *"
+    # Story — 12:00 PM UTC
+    - cron: "0 12 * * *"
+    # Carousel 2 — 6:00 PM UTC
+    - cron: "0 18 * * *"
+
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: "Slot: carousel1 | story | carousel2"
+        required: false
+        default: "carousel1"
+      series:
+        description: "Series ID (1–10, blank = all)"
+        required: false
+        default: ""
+      dry_run:
+        description: "Dry run? (true/false)"
+        required: false
+        default: "false"
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install --quiet Pillow groq requests
+
+      - name: Download Poppins fonts
+        run: |
+          mkdir -p fonts
+          BASE="https://github.com/google/fonts/raw/main/ofl/poppins"
+          for v in Regular Bold SemiBold Italic Light; do
+            FILE="fonts/Poppins-${v}.ttf"
+            [ -f "$FILE" ] && continue
+            curl -sL "${BASE}/Poppins-${v}.ttf" -o "$FILE" && echo "✓ Poppins-${v}.ttf"
+          done
+
+      - name: Run poster
+        env:
+          GROQ_API_KEY:               ${{ secrets.GROQ_API_KEY }}
+          IMGBB_API_KEY:              ${{ secrets.IMGBB_API_KEY }}
+          IG_TOKEN_SOMATIC:           ${{ secrets.IG_TOKEN_SOMATIC }}
+          IG_USER_ID_SOMATIC:         ${{ secrets.IG_USER_ID_SOMATIC }}
+          IG_TOKEN_GLP1:              ${{ secrets.IG_TOKEN_GLP1 }}
+          IG_USER_ID_GLP1:            ${{ secrets.IG_USER_ID_GLP1 }}
+          IG_TOKEN_ADHD:              ${{ secrets.IG_TOKEN_ADHD }}
+          IG_USER_ID_ADHD:            ${{ secrets.IG_USER_ID_ADHD }}
+          IG_TOKEN_MONEY:             ${{ secrets.IG_TOKEN_MONEY }}
+          IG_USER_ID_MONEY:           ${{ secrets.IG_USER_ID_MONEY }}
+          IG_TOKEN_HORMONE:           ${{ secrets.IG_TOKEN_HORMONE }}
+          IG_USER_ID_HORMONE:         ${{ secrets.IG_USER_ID_HORMONE }}
+          IG_TOKEN_AI:                ${{ secrets.IG_TOKEN_AI }}
+          IG_USER_ID_AI:              ${{ secrets.IG_USER_ID_AI }}
+          IG_TOKEN_INNER:             ${{ secrets.IG_TOKEN_INNER }}
+          IG_USER_ID_INNER:           ${{ secrets.IG_USER_ID_INNER }}
+          IG_TOKEN_CAREER:            ${{ secrets.IG_TOKEN_CAREER }}
+          IG_USER_ID_CAREER:          ${{ secrets.IG_USER_ID_CAREER }}
+          IG_TOKEN_RELATIONSHIP:      ${{ secrets.IG_TOKEN_RELATIONSHIP }}
+          IG_USER_ID_RELATIONSHIP:    ${{ secrets.IG_USER_ID_RELATIONSHIP }}
+          IG_TOKEN_CALM:              ${{ secrets.IG_TOKEN_CALM }}
+          IG_USER_ID_CALM:            ${{ secrets.IG_USER_ID_CALM }}
+
+        run: |
+          cd instagram_automation
+          ARGS=""
+          [ -n "${{ github.event.inputs.slot }}" ] && ARGS="$ARGS --slot ${{ github.event.inputs.slot }}"
+          [ -n "${{ github.event.inputs.series }}" ] && ARGS="$ARGS --series ${{ github.event.inputs.series }}"
+          [ "${{ github.event.inputs.dry_run }}" = "true" ] && ARGS="$ARGS --dry-run"
+          python run_posts.py $ARGS
+
+      - name: Upload post log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: post-log-${{ github.run_id }}
+          path: instagram_automation/posts/post_log.jsonl
+          retention-days: 30
