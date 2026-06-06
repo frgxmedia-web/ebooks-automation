@@ -48,7 +48,7 @@ def create_media_container(ig_user_id: str, access_token: str,
         params["media_type"] = media_type
 
     resp = requests.post(
-        f"https://graph.facebook.com/v21.0/{ig_user_id}/media",
+        f"https://graph.instagram.com/v21.0/{ig_user_id}/media",
         params=params,
         timeout=30,
     )
@@ -66,7 +66,7 @@ def publish_container(ig_user_id: str, access_token: str,
                       container_id: str) -> str:
     time.sleep(3)   # brief pause before publish
     resp = requests.post(
-        f"https://graph.facebook.com/v21.0/{ig_user_id}/media_publish",
+        f"https://graph.instagram.com/v21.0/{ig_user_id}/media_publish",
         params={
             "creation_id":  container_id,
             "access_token": access_token,
@@ -99,7 +99,7 @@ def post_carousel(slide_paths: list[str], caption: str,
         # Create carousel container
         print("  Creating carousel container...")
         carousel_resp = requests.post(
-            f"https://graph.facebook.com/v21.0/{ig_user_id}/media",
+            f"https://graph.instagram.com/v21.0/{ig_user_id}/media",
             params={
                 "media_type":   "CAROUSEL",
                 "children":     ",".join(item_ids),
@@ -137,7 +137,7 @@ def post_story(image_path: str, access_token: str, ig_user_id: str) -> dict:
 
         # Create story container (media_type=IMAGE for photo story)
         resp = requests.post(
-            f"https://graph.facebook.com/v21.0/{ig_user_id}/media",
+            f"https://graph.instagram.com/v21.0/{ig_user_id}/media",
             params={
                 "image_url":    image_url,
                 "media_type":   "IMAGE",
@@ -155,7 +155,7 @@ def post_story(image_path: str, access_token: str, ig_user_id: str) -> dict:
         # Publish to stories endpoint
         time.sleep(2)
         pub_resp = requests.post(
-            f"https://graph.facebook.com/v21.0/{ig_user_id}/media_publish",
+            f"https://graph.instagram.com/v21.0/{ig_user_id}/media_publish",
             params={
                 "creation_id":  container_id,
                 "access_token": access_token,
