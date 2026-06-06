@@ -92,7 +92,7 @@ def generate_slide_content(series_config: dict, book: dict) -> dict:
     client = Groq(api_key=api_key)
 
     prompt = f"""
-You write copy for Instagram carousels. Apex-style: sharp, real, no fluff.
+You write Instagram carousel copy. Real, sharp, zero fluff. Written like a knowledgeable friend — not a marketer, not an AI.
 
 Series: {series_config['name']}
 Book: "{book['title']}" — {book['subtitle']}
@@ -100,23 +100,29 @@ Niche: {series_config['niche']}
 
 Return ONLY valid JSON with these exact keys:
 
-"hook": One punchy statement. MAX 10 words. Dark, relatable, stops the scroll. No question marks. Like: "Your nervous system has been running on panic mode." or "Most people never fix this because nobody told them." Start with something they FEEL.
+"hook": One statement that stops the scroll. MAX 9 words. No question marks. Should feel like something the reader already knows but never heard said this way. Raw and real. Example style: "Your body has been keeping score this whole time." or "Nobody told you stress lives in your muscles."
 
-"p1_head": 4-6 word bold headline for point 01. A truth or fact that surprises.
-"p1_sub": 1-2 sentences expanding p1_head. Specific. No filler.
+"p1_head": 3-5 words. A fact or truth — no hype, no exclamation. Just a clean statement.
+"p1_sub": 2 short sentences max. Specific, grounded. No filler words.
 
-"p2_head": 4-6 word bold headline for point 02. A reframe or shift in thinking.
-"p2_sub": 1-2 sentences expanding p2_head.
+"p2_head": 3-5 words. A reframe — something that shifts how they see the topic.
+"p2_sub": 2 short sentences. Concrete detail.
 
-"p3_head": 4-6 word bold headline for point 03. Real-life situation they recognise.
-"p3_sub": 1-2 sentences. Paint the picture.
+"p3_head": 3-5 words. Something they will recognise from their own life.
+"p3_sub": 2 short sentences. Paint a real scene, not a generic one.
 
-"p4_head": 4-6 word bold headline for point 04. Practical — what to actually do.
-"p4_sub": 1-2 sentences. Actionable.
+"p4_head": 3-5 words. What actually helps — practical, not preachy.
+"p4_sub": 2 short sentences. Actionable. Warm tone.
 
-"caption": Full Instagram caption. 3-5 sentences. Human voice. No AI-speak. No em-dashes. End with: "Full 10-book bundle — link in bio." Include 2-3 natural emojis mid-text, not at start. No hashtags in caption.
+"caption": 3-4 sentences written like a real person typed this on their phone. No buzzwords. No em-dashes. No AI-speak. Subtly mention the book topic. Only at the very end, casually mention there is a full bundle available — link in bio. 2 emojis max, placed naturally mid-sentence. No hashtags.
 
-Rules: No em-dashes. No "I" or "we". Short punchy sentences. Return ONLY the JSON.
+STRICT RULES:
+- Zero asterisks (* or **)
+- Zero underscores for formatting
+- No exclamation marks
+- No "I" or "we"
+- No phrases like "dive into", "delve", "game-changer", "journey", "unlock"
+- Write like a human. Return ONLY the JSON.
 """
 
     response = client.chat.completions.create(
