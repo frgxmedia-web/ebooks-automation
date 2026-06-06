@@ -194,7 +194,7 @@ def make_slide_point(num: int, headline: str, subtext: str,
     # Divider below number
     num_bb = draw.textbbox((0,0), num_label, font=f_num)
     num_bottom = 100 + (num_bb[3] - num_bb[1])
-    thin_line(draw, num_bottom + 30, ac=ac, alpha=80, margin=72)
+    thin_line(draw, num_bottom + 55, ac=ac, alpha=80, margin=72)
 
     # Headline — bold white, large
     words = headline.split()
@@ -202,7 +202,7 @@ def make_slide_point(num: int, headline: str, subtext: str,
     f_head = load_font("Bold", fsize)
     lines = textwrap.wrap(headline, width=20)
     lh = fsize + 16
-    y = num_bottom + 60
+    y = num_bottom + 85
 
     for line in lines:
         bb = draw.textbbox((0,0), line, font=f_head)
@@ -212,12 +212,12 @@ def make_slide_point(num: int, headline: str, subtext: str,
 
     y += 18
 
-    # Subtext — lighter, smaller
-    f_sub = load_font("Regular", 36)
-    sub_lines = textwrap.wrap(subtext, width=34)
+    # Subtext — lighter, bigger
+    f_sub = load_font("Regular", 42)
+    sub_lines = textwrap.wrap(subtext, width=28)
     for s in sub_lines:
         draw.text((72, y), s, font=f_sub, fill=(185, 185, 210, 255))
-        y += 50
+        y += 58
 
     # Bottom accent bar
     draw.rectangle([0, H - 72, W, H], fill=(*ac, 255))
@@ -278,10 +278,10 @@ def make_slide_cta(book: dict, series_config: dict) -> Image.Image:
                   y, (180, 180, 210, 255))
     y += 46
 
-    # Gumroad link — prominent
+    # Gumroad link — prominent (show full URL)
     gumroad = series_config.get("gumroad_link", "link in bio")
-    f_link = load_font("Bold", 32)
-    draw_centered(draw, f"mindshiftbooks1.gumroad.com", f_link, y, (*ac, 255))
+    f_link = load_font("Bold", 28)
+    draw_centered(draw, gumroad, f_link, y, (*ac, 255))
 
     # Bottom bar
     draw.rectangle([0, H - 80, W, H], fill=(*ac, 255))
@@ -356,6 +356,17 @@ def generate_carousel(series_config: dict, book_num: int = None) -> dict:
     print(f"  Generating carousel — {series_config['name']} | Book {book['num']}: {book['title']}")
 
     content = generate_slide_content(series_config, book)
+
+    # Strip markdown and emojis (Poppins font doesn't support them)
+    import re
+    def clean(text):
+        text = text.replace("**", "").replace("*", "").replace("_", "")
+        text = re.sub(r'[^\x00-\x7FÀ-ɏ‘’“”–—]', '', text)
+        return text.strip()
+
+    for k in ["hook", "p1_head", "p1_sub", "p2_head", "p2_sub", "p3_head", "p3_sub", "p4_head", "p4_sub"]:
+        if k in content:
+            content[k] = clean(content[k])
 
     ts     = datetime.now().strftime("%Y%m%d_%H%M%S")
     sid    = series_config["series_id"]
