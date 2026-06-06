@@ -13,6 +13,7 @@ SERIES_PAGES = [
         "ig_page_username": "somaticshift1_",
         "ig_access_token_env": "IG_TOKEN_SOMATIC",
         "ig_user_id_env": "IG_USER_ID_SOMATIC",
+        "gumroad_link": "mindshiftbooks1.gumroad.com/l/somaticresetseries",
         "bio_cta": "Your nervous system isn't broken — it's stuck 📚 10-book bundle 👇",
         "bundle_tagline": "Reset your nervous system. Reclaim your body.",
         "books": [
@@ -42,6 +43,7 @@ SERIES_PAGES = [
         "ig_page_username": "glp1decoded1",
         "ig_access_token_env": "IG_TOKEN_GLP1",
         "ig_user_id_env": "IG_USER_ID_GLP1",
+        "gumroad_link": "mindshiftbooks1.gumroad.com/l/glp-1lifestyleseries",
         "bio_cta": "The GLP-1 guide no one gave you 📚 Full 10-book bundle 👇",
         "bundle_tagline": "Everything you need to know about GLP-1 — in one bundle.",
         "books": [
@@ -71,6 +73,7 @@ SERIES_PAGES = [
         "ig_page_username": "rewiredadhd1",
         "ig_access_token_env": "IG_TOKEN_ADHD",
         "ig_user_id_env": "IG_USER_ID_ADHD",
+        "gumroad_link": "mindshiftbooks1.gumroad.com/l/adhdblueprintseries",
         "bio_cta": "ADHD doesn't hold you back — this does 📚 Full blueprint 👇",
         "bundle_tagline": "10 books. One complete ADHD operating manual.",
         "books": [
@@ -100,6 +103,7 @@ SERIES_PAGES = [
         "ig_page_username": "healyourmoney1",
         "ig_access_token_env": "IG_TOKEN_MONEY",
         "ig_user_id_env": "IG_USER_ID_MONEY",
+        "gumroad_link": "mindshiftbooks1.gumroad.com/l/moneyhealingseries",
         "bio_cta": "Heal your relationship with money 💰 10-book bundle 👇",
         "bundle_tagline": "Money isn't just math. It's deeply personal.",
         "books": [
@@ -129,6 +133,7 @@ SERIES_PAGES = [
         "ig_page_username": "hormonecode1",
         "ig_access_token_env": "IG_TOKEN_HORMONE",
         "ig_user_id_env": "IG_USER_ID_HORMONE",
+        "gumroad_link": "mindshiftbooks1.gumroad.com/l/hormoneresetseries",
         "bio_cta": "Balance your hormones. Reclaim your energy. 📚 Bundle 👇",
         "bundle_tagline": "Your hormones aren't broken — they're trying to tell you something.",
         "books": [
@@ -158,6 +163,7 @@ SERIES_PAGES = [
         "ig_page_username": "prompt.mastery1",
         "ig_access_token_env": "IG_TOKEN_AI",
         "ig_user_id_env": "IG_USER_ID_AI",
+        "gumroad_link": "mindshiftbooks1.gumroad.com/l/aiprofessinoalseries",
         "bio_cta": "Master AI before it masters your career 📚 Bundle 👇",
         "bundle_tagline": "AI isn't replacing you. Someone using AI will.",
         "books": [
@@ -187,6 +193,7 @@ SERIES_PAGES = [
         "ig_page_username": "innerworkdaily1",
         "ig_access_token_env": "IG_TOKEN_INNER",
         "ig_user_id_env": "IG_USER_ID_INNER",
+        "gumroad_link": "mindshiftbooks1.gumroad.com/l/innerhealingseries",
         "bio_cta": "The healing starts from within 📚 Full 10-book series 👇",
         "bundle_tagline": "You can't think your way out of what you felt your way into.",
         "books": [
@@ -216,6 +223,7 @@ SERIES_PAGES = [
         "ig_page_username": "careerpivotlab1",
         "ig_access_token_env": "IG_TOKEN_CAREER",
         "ig_user_id_env": "IG_USER_ID_CAREER",
+        "gumroad_link": "mindshiftbooks1.gumroad.com/l/careerresetseries",
         "bio_cta": "Your career on your terms 📚 10-book reset bundle 👇",
         "bundle_tagline": "Burned out, stuck, or starting over — this series is for you.",
         "books": [
@@ -245,6 +253,7 @@ SERIES_PAGES = [
         "ig_page_username": "attachmentfix1",
         "ig_access_token_env": "IG_TOKEN_RELATIONSHIP",
         "ig_user_id_env": "IG_USER_ID_RELATIONSHIP",
+        "gumroad_link": "mindshiftbooks1.gumroad.com/l/relationshipresetseries",
         "bio_cta": "Reset how you love 📚 Complete relationship series 👇",
         "bundle_tagline": "Love better. Connect deeper. Fight smarter.",
         "books": [
@@ -275,6 +284,7 @@ SERIES_PAGES = [
         "ig_page_username": "raisecalm1",
         "ig_access_token_env": "IG_TOKEN_CALM",
         "ig_user_id_env": "IG_USER_ID_CALM",
+        "gumroad_link": "mindshiftbooks1.gumroad.com/l/calmparentseriesbundle",
         "bio_cta": "Raise calm kids by becoming one first 📚 Bundle 👇",
         "bundle_tagline": "You can't pour from an empty cup — and neither can your kids.",
         "books": [
