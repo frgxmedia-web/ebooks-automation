@@ -3,6 +3,14 @@
 __pycache__/
 *.pyc
 *.pyo
+.DS_Store
+~$*.xlsx
+
+# Credentials — keep local only
+instagram_accounts.xlsx
+
+# Large PDF bundles — distribute via Gumroad, not GitHub
+bundles/
 
 # Generated post images (large, regenerated each run)
 instagram_automation/posts/*.jpg
