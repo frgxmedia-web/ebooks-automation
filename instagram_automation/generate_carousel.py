@@ -402,14 +402,14 @@ def generate_carousel(series_config: dict, book_num: int = None) -> dict:
     save_jpg(story_img, story_path)
     print(f"    ✓ story: {os.path.basename(story_path)}")
 
-    # Caption with Gumroad link
-    gumroad = series_config.get("gumroad_link", "link in bio")
+    # Caption — no URL (Instagram captions aren't clickable, link goes in bio only)
     hashtags = " ".join(random.sample(series_config["hashtags"],
                                       min(11, len(series_config["hashtags"]))))
     caption_text = content["caption"]
-    # Ensure Gumroad link is in caption
-    if "gumroad" not in caption_text.lower() and gumroad != "link in bio":
-        caption_text = caption_text.rstrip() + f"\n\nGet the full bundle: {gumroad}"
+    # Remove any raw URLs the AI added — keep it clean
+    import re as _re
+    caption_text = _re.sub(r'https?://\S+', '', caption_text).strip()
+    caption_text = _re.sub(r'\w+\.gumroad\.com\S*', '', caption_text).strip()
 
     caption = f"{caption_text}\n\n{hashtags}"
 
