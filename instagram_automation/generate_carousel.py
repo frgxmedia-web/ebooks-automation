@@ -246,6 +246,51 @@ def make_slide_point(num: int, headline: str, subtext: str,
     return img
 
 
+# ── SLIDE 5.5: Bridge slide ───────────────────────────────────────────────────
+def make_slide_bridge(series_config: dict) -> Image.Image:
+    """Soft transition slide before the CTA. Feels natural, not salesy."""
+    ac   = hex_rgb(series_config["accent_hex"])
+    img  = Image.new("RGBA", (W, H), (*BG_TONES[1], 255))
+    img  = subtle_bg(img, ac, intensity=20)
+    draw = ImageDraw.Draw(img)
+
+    # Left accent stripe
+    draw.rectangle([0, 0, 5, H], fill=(*ac, 255))
+
+    # Main text — centered, large, soft
+    f_main = load_font("Bold", 72)
+    line1 = "if this resonated"
+    line2 = "with you —"
+    for i, line in enumerate([line1, line2]):
+        bb = draw.textbbox((0,0), line, font=f_main)
+        lw = bb[2] - bb[0]
+        y = 280 + i * 96
+        draw.text(((W - lw) // 2, y), line, font=f_main, fill=(255, 255, 255, 255))
+
+    # Sub line
+    f_sub = load_font("Light", 34)
+    sub = "there is a full book on exactly this."
+    bb = draw.textbbox((0,0), sub, font=f_sub)
+    lw = bb[2] - bb[0]
+    draw.text(((W - lw) // 2, 490), sub, font=f_sub, fill=(185, 185, 210, 255))
+
+    # Swipe nudge
+    thin_line(draw, 610, ac=ac, alpha=50)
+    f_swipe = load_font("Italic", 28)
+    nudge = "( swipe for the book )"
+    bb = draw.textbbox((0,0), nudge, font=f_swipe)
+    lw = bb[2] - bb[0]
+    draw.text(((W - lw) // 2, 636), nudge, font=f_swipe, fill=(*ac, 180))
+
+    # Bottom bar
+    draw.rectangle([0, H - 72, W, H], fill=(*ac, 255))
+    f_bot = load_font("Light", 22)
+    draw_centered(draw, series_config["name"].upper(), f_bot, H - 46,
+                  (255, 255, 255, 190))
+
+    return img
+
+
 # ── SLIDE 6: CTA ──────────────────────────────────────────────────────────────
 def make_slide_cta(book: dict, series_config: dict) -> Image.Image:
     ac   = hex_rgb(series_config["accent_hex"])
@@ -435,6 +480,7 @@ def generate_carousel(series_config: dict, book_num: int = None) -> dict:
         ("point2", make_slide_point(2, content["p2_head"], content["p2_sub"], series_config)),
         ("point3", make_slide_point(3, content["p3_head"], content["p3_sub"], series_config, save_line)),
         ("point4", make_slide_point(4, content["p4_head"], content["p4_sub"], series_config)),
+        ("bridge", make_slide_bridge(series_config)),
         ("cta",    make_slide_cta(book, series_config)),
     ]
 
