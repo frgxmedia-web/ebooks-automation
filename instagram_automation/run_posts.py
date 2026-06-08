@@ -28,18 +28,40 @@ LOG_FILE = os.path.join(os.path.dirname(__file__), "posts", "post_log.jsonl")
 os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 
 
-# ── Book selector — ensures carousel 1 and 2 don't repeat the same book ───────
+# ── Book selector — avoids repeating recently posted books ────────────────────
+def get_recent_books(series_name: str, lookback: int = 14) -> set:
+    """Read the log and return book_nums posted recently for this series."""
+    recent = set()
+    if not os.path.exists(LOG_FILE):
+        return recent
+    try:
+        with open(LOG_FILE) as f:
+            lines = f.readlines()
+        for line in lines[-lookback:]:
+            entry = json.loads(line.strip())
+            if entry.get("series_name") == series_name and entry.get("book_num"):
+                recent.add(entry["book_num"])
+    except Exception:
+        pass
+    return recent
+
 def pick_books_for_today(series_config: dict) -> tuple[int, int]:
     """
-    Deterministically picks two different book numbers for today.
-    Uses date + series_id as seed so it's reproducible within the same day.
+    Picks two different book numbers for today.
+    Avoids books posted in the last 14 log entries for this series.
+    Falls back to random if all books recently used.
     """
+    recent = get_recent_books(series_config["name"])
+    all_nums = list(range(1, 11))
+    available = [n for n in all_nums if n not in recent]
+    if len(available) < 2:
+        available = all_nums  # reset if all used
+
     today = datetime.now(timezone.utc).strftime("%Y%m%d")
     seed  = int(today) + series_config["series_id"] * 37
     rng   = random.Random(seed)
-    nums  = list(range(1, 11))
-    rng.shuffle(nums)
-    return nums[0], nums[1]
+    rng.shuffle(available)
+    return available[0], available[1]
 
 
 def detect_slot() -> str:
@@ -66,11 +88,15 @@ def run_series(series_config: dict, slot: str, dry_run: bool = False) -> dict:
     book_a, book_b = pick_books_for_today(series_config)
 
     if slot == "story":
-        # Story: just the bundle cover, no Gemini call needed
-        from generate_carousel import make_story_slide, save_jpg, OUTPUT_DIR
+        # Story: generate a quick hook from the series tagline, then build story
+        from generate_carousel import make_story_slide, save_jpg, OUTPUT_DIR, clean
         from datetime import datetime as dt
+        import re as _re
         ts  = dt.now().strftime("%Y%m%d_%H%M%S")
-        story_img  = make_story_slide(series_config)
+        # Use the bundle tagline as the hook for the story
+        hook_text = clean(series_config.get("bundle_tagline", series_config["name"]))
+        caption_q = "does this sound familiar to you?"
+        story_img  = make_story_slide(hook_text, caption_q, series_config)
         story_path = os.path.join(OUTPUT_DIR, f"s{sid:02d}_story_{ts}.jpg")
         save_jpg(story_img, story_path)
         print(f"  ✓ Story image: {os.path.basename(story_path)}")

@@ -105,7 +105,7 @@ Today's content angle: {theme_name} — {theme_instruction}
 
 Return ONLY valid JSON with these exact keys:
 
-"hook": One statement. MAX 9 words. Stops the scroll. No question marks. Should feel like something the reader already thinks but never saw written this way. Raw, personal, specific. Bad example: "Trauma lives in your body." Good example: "You fixed your life on paper. Still exhausted."
+"hook": One line. MAX 9 words. Stops the scroll instantly. Can be a statement OR a question — whichever hits harder for this specific book topic. Must be specific to the topic, never generic. Bad: "Still feeling stuck." or "Trauma lives in your body." Good: "Still exhausted after fixing everything?" or "Your thyroid is the one thing nobody checked." or "You changed your diet. Your hormones disagreed." Make it feel like the reader just got called out.
 
 "p1_head": 3-5 words. Clean truth or surprising fact. No hype.
 "p1_sub": 2 sentences. Specific and grounded. Conversational, not clinical.
