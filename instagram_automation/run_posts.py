@@ -66,9 +66,9 @@ def pick_books_for_today(series_config: dict) -> tuple[int, int]:
 
 def detect_slot() -> str:
     hour = datetime.now(timezone.utc).hour
-    if hour < 11:
+    if hour < 14:
         return "carousel1"
-    elif hour < 15:
+    elif hour < 17:
         return "story"
     else:
         return "carousel2"
