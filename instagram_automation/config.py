@@ -163,7 +163,7 @@ SERIES_PAGES = [
         "ig_page_username": "prompt.mastery1",
         "ig_access_token_env": "IG_TOKEN_AI",
         "ig_user_id_env": "IG_USER_ID_AI",
-        "gumroad_link": "mindshiftbooks1.gumroad.com/l/aiprofessinoalseries",
+        "gumroad_link": "mindshiftbooks1.gumroad.com/l/aiprofessionalseries",
         "bio_cta": "Master AI before it masters your career 📚 Bundle 👇",
         "bundle_tagline": "AI isn't replacing you. Someone using AI will.",
         "books": [
@@ -310,8 +310,8 @@ SERIES_PAGES = [
 ]
 
 # GitHub Actions schedule: 2 carousels + 1 story per page per day
-POST_TIMES_UTC = ["09:00", "18:00"]   # carousel 1, carousel 2
-STORY_TIME_UTC = "12:00"              # story (midday)
+POST_TIMES_UTC = ["13:00", "23:00"]   # carousel 1, carousel 2
+STORY_TIME_UTC = "15:00"              # story (midday)
 
 GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_API_KEY_ENV = "GROQ_API_KEY"
