@@ -7,28 +7,37 @@ Handles:
 
 import os
 import time
+import hashlib
 import requests
 
 
-# ── Image hosting via imgbb ────────────────────────────────────────────────────
-def upload_image(image_path: str) -> str | None:
-    """Uploads to imgbb (free), returns the public image URL."""
-    imgbb_key = os.environ.get("IMGBB_API_KEY", "")
-    if not imgbb_key:
-        raise ValueError("IMGBB_API_KEY not set")
+# ── Image hosting via Cloudinary ──────────────────────────────────────────────
+def upload_image(image_path: str) -> str:
+    """Uploads to Cloudinary (free 25GB/month), returns public HTTPS URL."""
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "")
+    api_key    = os.environ.get("CLOUDINARY_API_KEY", "")
+    api_secret = os.environ.get("CLOUDINARY_API_SECRET", "")
+
+    if not all([cloud_name, api_key, api_secret]):
+        raise ValueError("CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET not set")
+
+    ts  = int(time.time())
+    sig = hashlib.sha1(f"timestamp={ts}{api_secret}".encode()).hexdigest()
 
     with open(image_path, "rb") as f:
         resp = requests.post(
-            "https://api.imgbb.com/1/upload",
-            params={"key": imgbb_key},
-            files={"image": f},
-            timeout=30,
+            f"https://api.cloudinary.com/v1_1/{cloud_name}/image/upload",
+            data={"api_key": api_key, "timestamp": ts, "signature": sig},
+            files={"file": f},
+            timeout=60,
         )
 
     if resp.status_code != 200:
-        raise RuntimeError(f"imgbb upload failed ({resp.status_code}): {resp.text[:200]}")
+        raise RuntimeError(f"Cloudinary upload failed ({resp.status_code}): {resp.text[:300]}")
 
-    url = resp.json()["data"]["url"]
+    url = resp.json().get("secure_url", "")
+    if not url:
+        raise RuntimeError("No secure_url in Cloudinary response")
     print(f"    ↑ uploaded: {url}")
     return url
 

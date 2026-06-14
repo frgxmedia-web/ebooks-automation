@@ -58,6 +58,9 @@ jobs:
           GROQ_API_KEY:               ${{ secrets.GROQ_API_KEY }}
           IMGBB_API_KEY:              ${{ secrets.IMGBB_API_KEY }}
           PEXELS_API_KEY:             ${{ secrets.PEXELS_API_KEY }}
+          CLOUDINARY_CLOUD_NAME:      ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY:         ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET:      ${{ secrets.CLOUDINARY_API_SECRET }}
           IG_TOKEN_SOMATIC:           ${{ secrets.IG_TOKEN_SOMATIC }}
           IG_USER_ID_SOMATIC:         ${{ secrets.IG_USER_ID_SOMATIC }}
           IG_TOKEN_GLP1:              ${{ secrets.IG_TOKEN_GLP1 }}
