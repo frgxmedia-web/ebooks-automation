@@ -12,6 +12,7 @@ import random
 import re
 import urllib.request
 import urllib.error
+import urllib.parse
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from groq import Groq
@@ -103,10 +104,9 @@ def fetch_pexels_photo(keyword: str, size: tuple = (W, H)) -> Image.Image | None
             img = Image.open(io.BytesIO(r.read())).convert("RGBA")
         img = img.resize(size, Image.LANCZOS)
         return img
-    except Exception:
+    except Exception as e:
+        print(f"    ~ Pexels error: {e}")
         return None
-
-import urllib.parse
 
 
 # ── Background Builders ───────────────────────────────────────────────────────
