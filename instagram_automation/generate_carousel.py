@@ -86,8 +86,64 @@ def fetch_pexels_photo(keyword: str, size: tuple = (W, H)) -> Image.Image | None
 
 
 # ── Background Builders ───────────────────────────────────────────────────────
+def make_bg_cold_open(w: int, h: int, ac: tuple) -> Image.Image:
+    """Slide 1 — dramatic diagonal bleed, strongest accent. Hook energy."""
+    base = (8, 8, 12)
+    img  = Image.new("RGBA", (w, h), (*base, 255))
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    r = int(w * 0.85)
+    d.ellipse([w - r + 60, -r + 60, w + 60, 60], fill=(*ac, 38))
+    r2 = int(w * 0.45)
+    d.ellipse([-r2//2, h - r2//2, r2//2, h + r2//2], fill=(*ac, 18))
+    return Image.alpha_composite(img, layer)
+
+def make_bg_spine(w: int, h: int, ac: tuple) -> Image.Image:
+    """Slide 3 — glow from bottom-left. Grounded energy."""
+    base = (10, 10, 14)
+    img  = Image.new("RGBA", (w, h), (*base, 255))
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    r = int(w * 0.7)
+    d.ellipse([-r//3, h - r//2, r, h + r//3], fill=(*ac, 24))
+    r2 = int(w * 0.3)
+    d.ellipse([w - r2, -r2//3, w + r2//3, r2//2], fill=(*ac, 10))
+    return Image.alpha_composite(img, layer)
+
+def make_bg_turn(w: int, h: int, ac: tuple) -> Image.Image:
+    """Slide 5 — accent rises from bottom. Emotional peak."""
+    base = (6, 6, 10)
+    img  = Image.new("RGBA", (w, h), (*base, 255))
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    r = int(w * 0.9)
+    d.ellipse([w//2 - r//2, h - r//3, w//2 + r//2, h + r//2], fill=(*ac, 30))
+    r2 = int(w * 0.3)
+    d.ellipse([w//2 - r2//2, -r2//3, w//2 + r2//2, r2//2], fill=(*ac, 8))
+    return Image.alpha_composite(img, layer)
+
+def make_bg_payoff(w: int, h: int, ac: tuple) -> Image.Image:
+    """Slide 6 — near-black, centred micro-glow. Final statement."""
+    base = (5, 5, 8)
+    img  = Image.new("RGBA", (w, h), (*base, 255))
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    r = int(w * 0.4)
+    d.ellipse([w//2 - r//2, h//2 - r//2, w//2 + r//2, h//2 + r//2], fill=(*ac, 12))
+    return Image.alpha_composite(img, layer)
+
+def make_bg_cta(w: int, h: int, ac: tuple) -> Image.Image:
+    """Slide 7 — spotlight from centre-top onto book title."""
+    base = (8, 8, 12)
+    img  = Image.new("RGBA", (w, h), (*base, 255))
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    r = int(w * 0.75)
+    d.ellipse([w//2 - r//2, -r//4, w//2 + r//2, h//2 + r//4], fill=(*ac, 28))
+    return Image.alpha_composite(img, layer)
+
 def make_dark_gradient(w: int, h: int, ac: tuple, intensity: int = 22) -> Image.Image:
-    """Radial gradient from corner — dark with accent glow."""
+    """Generic dark gradient — top-right glow (fallback/story)."""
     base = (10, 10, 14)
     img  = Image.new("RGBA", (w, h), (*base, 255))
     layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
@@ -120,7 +176,6 @@ def make_light_bg(w: int, h: int, ac: tuple) -> Image.Image:
 
 def apply_photo_bg(photo: Image.Image, overlay_color: tuple = (0,0,0),
                    overlay_alpha: int = 140) -> Image.Image:
-    """Darken photo for text legibility."""
     photo = photo.convert("RGBA")
     overlay = Image.new("RGBA", photo.size, (*overlay_color, overlay_alpha))
     return Image.alpha_composite(photo, overlay)
@@ -208,10 +263,7 @@ def make_slide_cold_open(hook: str, series_config: dict,
                           photo: Image.Image | None = None) -> Image.Image:
     ac = hex_rgb(series_config["accent_hex"])
 
-    if photo:
-        img = apply_photo_bg(photo, overlay_color=(5, 5, 10), overlay_alpha=150)
-    else:
-        img = make_dark_gradient(W, H, ac, intensity=28)
+    img = make_bg_cold_open(W, H, ac)
 
     draw = ImageDraw.Draw(img)
 
@@ -286,7 +338,7 @@ def make_slide_mirror(mirror_text: str, series_config: dict) -> Image.Image:
 def make_slide_point_dark(num: int, headline: str, subtext: str,
                            series_config: dict, save_line: str = "") -> Image.Image:
     ac   = hex_rgb(series_config["accent_hex"])
-    img  = make_dark_gradient(W, H, ac, intensity=16)
+    img  = make_bg_spine(W, H, ac)
     draw = ImageDraw.Draw(img)
 
     draw.rectangle([0, 0, 6, H], fill=(*ac, 255))
@@ -381,10 +433,7 @@ def make_slide_turn(admission: str, lesson: str, series_config: dict,
     """The screenshot slide — sharpest line in the set."""
     ac = hex_rgb(series_config["accent_hex"])
 
-    if photo:
-        img = apply_photo_bg(photo, overlay_color=(8, 8, 16), overlay_alpha=160)
-    else:
-        img = make_dark_gradient(W, H, ac, intensity=20)
+    img = make_bg_turn(W, H, ac)
 
     draw = ImageDraw.Draw(img)
     draw.rectangle([0, 0, 6, H], fill=(*ac, 255))
@@ -429,8 +478,7 @@ def make_slide_turn(admission: str, lesson: str, series_config: dict,
 def make_slide_payoff(belief: str, action: str, series_config: dict) -> Image.Image:
     """Belief flip + one specific action. Closes the story."""
     ac   = hex_rgb(series_config["accent_hex"])
-    dark = (6, 6, 10)
-    img  = Image.new("RGBA", (W, H), (*dark, 255))
+    img  = make_bg_payoff(W, H, ac)
     draw = ImageDraw.Draw(img)
 
     # Full accent top bar
@@ -476,7 +524,7 @@ def make_slide_payoff(belief: str, action: str, series_config: dict) -> Image.Im
 # ── SLIDE 7: CTA ──────────────────────────────────────────────────────────────
 def make_slide_cta(book: dict, series_config: dict) -> Image.Image:
     ac   = hex_rgb(series_config["accent_hex"])
-    img  = make_dark_gradient(W, H, ac, intensity=28)
+    img  = make_bg_cta(W, H, ac)
     draw = ImageDraw.Draw(img)
 
     bar_h = 88
