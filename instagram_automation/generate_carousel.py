@@ -10,9 +10,6 @@ import json
 import textwrap
 import random
 import re
-import urllib.request
-import urllib.error
-import urllib.parse
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from groq import Groq
@@ -85,26 +82,7 @@ def thin_line(draw, y, img_w=W, ac=(255,255,255), alpha=60, margin=80):
 
 # ── Photo Fetching (Pexels) ───────────────────────────────────────────────────
 def fetch_pexels_photo(keyword: str, size: tuple = (W, H)) -> Image.Image | None:
-    api_key = os.environ.get("UNSPLASH_ACCESS_KEY", "")
-    if not api_key:
-        return None
-    try:
-        req = urllib.request.Request(
-            f"https://api.unsplash.com/photos/random?query={urllib.parse.quote(keyword)}&orientation=squarish&content_filter=high",
-            headers={"Authorization": f"Client-ID {api_key}"}
-        )
-        with urllib.request.urlopen(req, timeout=10) as r:
-            data = json.loads(r.read())
-        img_url = data.get("urls", {}).get("regular") or data.get("urls", {}).get("full")
-        if not img_url:
-            return None
-        with urllib.request.urlopen(img_url, timeout=15) as r:
-            img = Image.open(io.BytesIO(r.read())).convert("RGBA")
-        img = img.resize(size, Image.LANCZOS)
-        return img
-    except Exception as e:
-        print(f"    ~ Unsplash error: {e}")
-        return None
+    return None
 
 
 # ── Background Builders ───────────────────────────────────────────────────────
